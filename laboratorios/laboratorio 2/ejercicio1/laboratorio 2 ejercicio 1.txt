@@ -1,0 +1,58 @@
+const int BTN_CONT = 2;
+const int BTN_RESET = 3;
+const int LED = 13;
+
+int valor = 0;
+
+bool estadoPrevCont = HIGH;
+bool estadoPrevReset = HIGH;
+
+void setup() {
+  pinMode(BTN_CONT, INPUT_PULLUP);
+  pinMode(BTN_RESET, INPUT_PULLUP);
+  pinMode(LED, OUTPUT);
+
+  Serial.begin(9600);
+  Serial.println("Inicio del sistema - contador = 0");
+}
+
+void loop() {
+
+  bool estadoCont = digitalRead(BTN_CONT);
+  bool estadoReset = digitalRead(BTN_RESET);
+
+  // --- BOTÓN CONTADOR ---
+  if (!estadoCont && estadoPrevCont) {
+    delay(50);
+
+    valor++;
+
+    Serial.print("Valor actual: ");
+    Serial.println(valor);
+
+    // Feedback LED
+    digitalWrite(LED, HIGH);
+    delay(80);
+    digitalWrite(LED, LOW);
+  }
+
+  estadoPrevCont = estadoCont;
+
+  // --- BOTÓN RESET ---
+  if (!estadoReset && estadoPrevReset) {
+    delay(50);
+
+    valor = 0;
+
+    Serial.println("Reinicio realizado");
+
+    for (int j = 0; j < 2; j++) {
+      digitalWrite(LED, HIGH);
+      delay(80);
+      digitalWrite(LED, LOW);
+      delay(80);
+    }
+  }
+
+  estadoPrevReset = estadoReset;
+}

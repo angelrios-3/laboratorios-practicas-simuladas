@@ -1,0 +1,63 @@
+const int BTN_UP = 2;
+const int BTN_RST = 3;
+const int LED_OUT = 13;
+
+int valorActual = 0;
+
+bool lastUp = HIGH;
+bool lastRst = HIGH;
+
+void setup() {
+  pinMode(BTN_UP, INPUT_PULLUP);
+  pinMode(BTN_RST, INPUT_PULLUP);
+  pinMode(LED_OUT, OUTPUT);
+
+  Serial.begin(9600);
+  Serial.println("Sistema de conteo con parpadeo");
+}
+
+void loop() {
+
+  bool lecturaUp = digitalRead(BTN_UP);
+  bool lecturaRst = digitalRead(BTN_RST);
+
+  // -------- SUMAR --------
+  if (lecturaUp == LOW && lastUp == HIGH) {
+    delay(50);
+
+    valorActual += 1;
+
+    Serial.print("Cuenta: ");
+    Serial.println(valorActual);
+
+    ejecutarParpadeo(valorActual);
+  }
+
+  lastUp = lecturaUp;
+
+  // -------- RESET --------
+  if (lecturaRst == LOW && lastRst == HIGH) {
+    delay(50);
+
+    valorActual = 0;
+
+    Serial.println("Reinicio total");
+
+    digitalWrite(LED_OUT, HIGH);
+    delay(700);
+    digitalWrite(LED_OUT, LOW);
+  }
+
+  lastRst = lecturaRst;
+}
+
+
+// 🔥 Función separada (esto lo hace ver más pro)
+void ejecutarParpadeo(int veces) {
+  for (int n = 0; n < veces; n++) {
+    digitalWrite(LED_OUT, HIGH);
+    delay(200);
+    digitalWrite(LED_OUT, LOW);
+    delay(200);
+  }
+}

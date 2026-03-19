@@ -1,0 +1,58 @@
+const int BTN_SUMA = 2;
+const int BTN_CLEAR = 3;
+const int LED_PIN = 13;
+
+int conteo = 0;
+
+bool prevSuma = HIGH;
+bool prevClear = HIGH;
+
+void setup() {
+  pinMode(BTN_SUMA, INPUT_PULLUP);
+  pinMode(BTN_CLEAR, INPUT_PULLUP);
+  pinMode(LED_PIN, OUTPUT);
+
+  Serial.begin(9600);
+  Serial.println("Modo: parpadeo segun contador");
+}
+
+void loop() {
+
+  bool estadoSuma = digitalRead(BTN_SUMA);
+  bool estadoClear = digitalRead(BTN_CLEAR);
+
+  // ---- BOTÓN SUMA ----
+  if (!estadoSuma && prevSuma) {
+    delay(50);
+
+    conteo++;
+
+    Serial.print("Total: ");
+    Serial.println(conteo);
+
+    // Parpadeo proporcional
+    for (int k = 0; k < conteo; k++) {
+      digitalWrite(LED_PIN, HIGH);
+      delay(200);
+      digitalWrite(LED_PIN, LOW);
+      delay(200);
+    }
+  }
+
+  prevSuma = estadoSuma;
+
+  // ---- BOTÓN RESET ----
+  if (!estadoClear && prevClear) {
+    delay(50);
+
+    conteo = 0;
+
+    Serial.println("Reset aplicado");
+
+    digitalWrite(LED_PIN, HIGH);
+    delay(700);
+    digitalWrite(LED_PIN, LOW);
+  }
+
+  prevClear = estadoClear;
+}
